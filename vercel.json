@@ -17,6 +17,10 @@
       "destination": "https://oapi2.zyosoft.cn/license/:path*"
     },
     {
+      "source": "/api/checkin/:path*",
+      "destination": "https://oapi2.zyosoft.cn/sy-checkin/:path*"
+    },
+    {
       "source": "/api/member/:path*",
       "destination": "https://oapi2.zyosoft.cn/member/:path*"
     },
