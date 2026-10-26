@@ -12,6 +12,7 @@ import {
 import * as api from "../api.js";
 import { useRemote } from "../hooks.js";
 import { Header, State } from "../ui.jsx";
+import ArchivePhotos from "./ArchivePhotos.jsx";
 import { previewUrl } from "../media.js";
 import { uploadFile } from "../upload.js";
 import {
@@ -41,7 +42,7 @@ const fingerprint = (p) =>
     status: p.enum_status,
     parent: p._parent,
   });
-export default function BookEditor({ id, title, onBack, toast }) {
+export default function BookEditor({ id, title, child, onBack, toast }) {
   const state = useRemote(async () => {
     const [book, fonts, photos] = await Promise.all([
       api.bookInfo(id),
@@ -313,6 +314,9 @@ export default function BookEditor({ id, title, onBack, toast }) {
     setBusy("检查页面状态…");
     setError("");
     try {
+      const currentBook = await api.bookInfo(id);
+      if (currentBook.enum_status === 200)
+        throw new Error("档案已进入查看状态，请重新打开档案。");
       const changed = dirty.map((pid) => clone(pages[pid]));
       for (const p of changed) {
         const current = await api.bookPage(p.order_page_id);
@@ -354,9 +358,14 @@ export default function BookEditor({ id, title, onBack, toast }) {
           actual = saved[i];
         if (
           actual.thumb_url !== expected.thumb_url ||
+          actual.layers?.length !== expected.layers.length ||
           expected.layers.some((l) => {
             const other = actual.layers?.find(
-              (x) => x.order_layer_id === l.order_layer_id,
+              (x) =>
+                x.order_layer_id === l.order_layer_id ||
+                (l.order_layer_id.startsWith("new") &&
+                  x.sort === l.sort &&
+                  x.layer_type === l.layer_type),
             );
             return (
               !other ||
@@ -419,7 +428,7 @@ export default function BookEditor({ id, title, onBack, toast }) {
           </button>
         }
       />
-      <State {...state} />
+      {(state.loading || state.error) && <State {...state} />}
       {book && (
         <>
           <div className="archive-topline">
@@ -791,50 +800,17 @@ export default function BookEditor({ id, title, onBack, toast }) {
             </div>
           )}
           {panel === "photos" && canEdit && (
-            <section className="archive-photo-picker">
-              <div className="archive-panel-head">
-                <h2>选择照片</h2>
-                <button onClick={() => setPanel("")}>完成</button>
-              </div>
-              <label className="archive-local">
-                从本地选择照片
-                <input
-                  aria-label="从本地选择照片"
-                  type="file"
-                  accept="image/*"
-                  onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (!file) return;
-                    const url = URL.createObjectURL(file);
-                    localFiles.current.set(url, file);
-                    await choosePhoto({ url });
-                    e.target.value = "";
-                  }}
-                />
-              </label>
-              <div className="archive-photo-grid">
-                {(state.data.photos || [])
-                  .filter(
-                    (p, i, all) =>
-                      p.photoUrl &&
-                      all.findIndex((x) => x.photoUrl === p.photoUrl) === i,
-                  )
-                  .map((p) => (
-                    <button
-                      key={p.photoId || p.photoUrl}
-                      onClick={() =>
-                        choosePhoto({ url: p.photoUrl, id: p.photoId })
-                      }
-                    >
-                      <img
-                        loading="lazy"
-                        src={previewUrl(p.photoUrl, 250)}
-                        alt="选择这张照片"
-                      />
-                    </button>
-                  ))}
-              </div>
-            </section>
+            <ArchivePhotos
+              child={child}
+              photos={state.data.photos || []}
+              onChoose={choosePhoto}
+              onClose={() => setPanel("")}
+              onLocal={async (file) => {
+                const url = URL.createObjectURL(file);
+                localFiles.current.set(url, file);
+                await choosePhoto({ url });
+              }}
+            />
           )}
           {panel === "leave" && (
             <div
