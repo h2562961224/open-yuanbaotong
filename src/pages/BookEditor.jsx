@@ -483,11 +483,10 @@ export default function BookEditor({ id, title, child, onBack, toast }) {
                 >
                   <canvas
                     ref={canvas}
+                    key={page.order_page_id}
                     aria-label={page.page_title || "档案页面"}
-                    style={{ visibility: painted ? "visible" : "hidden" }}
                   />
-                  {painted &&
-                    !preview &&
+                  {!preview &&
                     [...(page.layers || [])]
                       .sort((a, b) => (a.sort || 0) - (b.sort || 0))
                       .filter(editableLayer)
@@ -499,6 +498,10 @@ export default function BookEditor({ id, title, child, onBack, toast }) {
                             aria-label={`${textLayer(l) ? "编辑文字" : l.layer_type === "shape" ? "编辑照片" : "编辑贴纸"}：${textLayer(l) ? l.layer_text || "空白" : l.layer_name || ""}`}
                             className={`archive-layer ${selected === l.order_layer_id ? "selected" : ""} ${l.layer_type === "shape" && !l.photo_url ? "empty" : ""}`}
                             disabled={!canEdit || !!busy}
+                            onClick={() => {
+                              setSelected(l.order_layer_id);
+                              setPanel(textLayer(l) ? "text" : "");
+                            }}
                             style={{
                               left: `${(b.x / book.size.preview_width) * 100}%`,
                               top: `${(b.y / book.size.preview_height) * 100}%`,
