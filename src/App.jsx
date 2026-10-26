@@ -77,7 +77,7 @@ function Feed({ children, onLogout, toast }) {
   const [childId, setChildId] = useState(String(children[0].id));
   const child = children.find(item => String(item.id) === childId) || children[0];
   const [circle, setCircle] = useState('class');
-  const [type, setType] = useState('');
+  const [type, setType] = useState('all');
   const [refresh, setRefresh] = useState(0);
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState([]);
@@ -88,7 +88,7 @@ function Feed({ children, onLogout, toast }) {
   useEffect(() => {
     let current = true; setLoading(true); setError('');
     if (page === 1) setPosts([]);
-    api.timeline(circle, child, page, type).then(data => {
+    api.timeline(circle, child, page === 1 ? '' : posts.at(-1)?.id, type).then(data => {
       if (!current) return;
       const result = pageFrom(data);
       const rows = result.rows.map(postFrom);
@@ -101,8 +101,8 @@ function Feed({ children, onLogout, toast }) {
   return <>
     <header className="page-head"><h1>时光轴</h1><Button variant="ghost" className="text-button" onClick={onLogout}>退出登录</Button></header>
     <section className="baby-header"><Avatar large url={child.avatar}/><div className="baby-info"><label className="baby-select"><select aria-label="选择宝宝" value={childId} onChange={event => { setChildId(event.target.value); reset(); }}>{children.map(item => <option value={String(item.id)} key={item.id}>{item.name}</option>)}</select><ChevronDown/></label><p className="muted">{[child.schoolName, child.className].filter(Boolean).join(' · ')}</p></div></section>
-    <div className="circle-sticky"><div className="circle-tabs" role="tablist" aria-label="动态类型">{[['family', '亲友圈'], ['class', '班级圈']].map(([value, label]) => <button key={value} role="tab" aria-selected={circle === value} onClick={() => { if (value !== circle) { setCircle(value); setType(''); reset(); } }}>{label}</button>)}</div>
-      {circle === 'class' && <div className="filters" role="tablist" aria-label="班级圈分类">{[['', '全部'], ['school', '园所'], ['class', '班级'], ['parent', '家长']].map(([value, label]) => <button key={value} role="tab" aria-selected={type === value} onClick={() => { if (type !== value) { setType(value); reset(); } }}>{label}</button>)}</div>}
+    <div className="circle-sticky"><div className="circle-tabs" role="tablist" aria-label="动态类型">{[['family', '亲友圈'], ['class', '班级圈']].map(([value, label]) => <button key={value} role="tab" aria-selected={circle === value} onClick={() => { if (value !== circle) { setCircle(value); setType('all'); reset(); } }}>{label}</button>)}</div>
+      {circle === 'class' && <div className="filters" role="tablist" aria-label="班级圈分类">{[['all', '全部'], ['school', '园所'], ['class', '班级'], ['home', '家长']].map(([value, label]) => <button key={value} role="tab" aria-selected={type === value} onClick={() => { if (type !== value) { setType(value); reset(); } }}>{label}</button>)}</div>}
     </div>
     <section aria-label="动态列表">{posts.map((post, index) => <Post key={`${post.id || index}-${circle}`} post={post} family={circle === 'family'} onView={(media, selected) => setView({ media, selected })}/>)}</section>
     <div className="load-area"><p role="status">{loading ? '加载中…' : error || (!posts.length ? '暂无动态' : !more ? '没有更多了' : '')}</p>
@@ -127,7 +127,7 @@ export default function App() {
   useEffect(() => {
     if (!session) return;
     let current = true; setLoading(true); setError('');
-    api.userInfo().then(info => {
+    api.familyBabies().then(info => {
       if (!current) return;
       const list = childrenFrom(info);
       if (!list.length) throw new Error('尚未读取到宝宝信息，请重试。若 App 中已有宝宝，需要进一步适配账号数据。');

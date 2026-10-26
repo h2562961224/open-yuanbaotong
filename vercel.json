@@ -17,6 +17,22 @@
       "destination": "https://oapi2.zyosoft.cn/license/:path*"
     },
     {
+      "source": "/api/member/:path*",
+      "destination": "https://oapi2.zyosoft.cn/member/:path*"
+    },
+    {
+      "source": "/api/share/:path*",
+      "destination": "https://oapi2.zyosoft.cn/share/:path*"
+    },
+    {
+      "source": "/api/cloud/:path*",
+      "destination": "https://oapi2.zyosoft.cn/sy-cloud-disk/:path*"
+    },
+    {
+      "source": "/api/album/:path*",
+      "destination": "https://oapi2.zyosoft.cn/sy-album/:path*"
+    },
+    {
       "source": "/media/ali/:path*",
       "destination": "https://ali-sybaby.zyosoft.cn/:path*"
     },

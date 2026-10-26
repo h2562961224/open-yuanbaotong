@@ -1,43 +1,25 @@
-// Adapters are kept separate because the upstream API is not a public, versioned API.
-const first = (...values) => values.find(value => value !== undefined && value !== null && value !== '');
-export function childrenFrom(profile) {
-  const result = new Map();
-  const visit = (value, depth = 0) => {
-    if (!value || typeof value !== 'object' || depth > 7) return;
-    if (Array.isArray(value)) return value.forEach(item => visit(item, depth + 1));
-    const id = first(value.studId, value.stud_id);
-    const name = first(value.studName, value.stud_name, value.studNick, value.stud_nick);
-    if (id && name) {
-      const existing = result.get(String(id)) || {};
-      result.set(String(id), { ...existing, id, name, avatar: first(value.studAvatarUrl, value.avatarUrl, value.avatar_url, existing.avatar), schoolId: first(value.schoolId, value.school_id, existing.schoolId), classId: first(value.classId, value.class_id, existing.classId), schoolName: first(value.schoolName, value.school_name, existing.schoolName), className: first(value.className, value.class_name, existing.className) });
-    }
-    Object.values(value).forEach(item => { if (typeof item === 'object') visit(item, depth + 1); });
-  };
-  visit(profile);
-  return [...result.values()];
+// Field names follow the parent App's decoded response models.
+export function childrenFrom(rows) {
+  if (!Array.isArray(rows)) throw new Error('宝宝列表返回格式异常');
+  return rows.map(row => ({...row,id:row.studId,name:row.studNick || row.studName,avatar:row.avatarUrl})).filter(row=>row.id);
 }
 export function pageFrom(data) {
-  if (Array.isArray(data)) return { rows: data, more: data.length >= 20 };
-  const rows = first(data?.list, data?.records, data?.rows, data?.items, data?.data);
-  if (!Array.isArray(rows)) throw new Error('暂时无法识别动态列表，请重试');
-  const total = first(data.total, data.totalCount, data.count);
-  return { rows, total, more: rows.length >= 20 };
+  const rows = Array.isArray(data) ? data : data?.list ?? data?.records ?? data?.data;
+  if (!Array.isArray(rows)) throw new Error('列表返回格式异常，请重试');
+  return {rows,more:rows.length > 0};
+}
+export function mediaFrom(files) {
+  if (typeof files === 'string') {try {files=JSON.parse(files);} catch {files=[];}}
+  if (!Array.isArray(files)) return [];
+  return files.map(file=>typeof file === 'string' ? {url:file} : {
+    id:file.id,url:file.fileUrl || file.url,thumb:file.thumbUrl,width:file.width,height:file.height,
+    video:/^(mp4|mov|m4v)$/i.test(file.suffix || '') || /\.(mp4|mov|m4v)(\?|$)/i.test(file.fileUrl || file.url || ''),
+    audio:/^(mp3|m4a|aac|wav)$/i.test(file.suffix || '') || /\.(mp3|m4a|aac|wav)(\?|$)/i.test(file.fileUrl || '')
+  }).filter(file=>file.url);
 }
 export function postFrom(raw) {
-  let files = first(raw.timeline_files, raw.timelineFiles, raw.files, raw.fileList, []);
-  if (typeof files === 'string') { try { files = JSON.parse(files); } catch { files = []; } }
-  if (!Array.isArray(files)) files = [];
-  const media = files.map(item => {
-    if (typeof item === 'string') return { url: item, video: /\.(mp4|mov)(\?|$)/i.test(item) };
-    const url = first(item.fileUrl, item.file_url, item.url, item.path, item.photoUrl);
-    return { url, thumb: first(item.thumbUrl, item.thumb_url), video: /\.(mp4|mov)(\?|$)/i.test(url || '') || /video/i.test(String(item.fileType || '')) };
-  }).filter(item => item.url);
-  return {
-    id: first(raw.id, raw.timelineId),
-    author: first(raw.userName, raw.nickName, raw.nickname, raw.user_nick, raw.user?.nickName, raw.senderName, ''),
-    avatar: first(raw.userAvatarUrl, raw.avatarUrl, raw.avatar_url, raw.user?.avatarUrl),
-    text: String(first(raw.timeline_content, raw.timelineContent, raw.content, '')),
-    date: String(first(raw.createTime, raw.create_time, raw.publishTime, raw.timelineTime, '')),
-    likes: first(raw.likeCount, raw.praiseCount, 0), comments: first(raw.replyCount, raw.commentCount, 0), media
-  };
+  return {...raw,id:raw.id || raw.timelineId,author:raw.userName || [raw.studName,raw.kinship].filter(Boolean).join('') || raw.userNick || '动态',
+    avatar:raw.userAvatarUrl || raw.avatarUrl,text:raw.content || '',date:raw.publicTime || raw.createDate || raw.eventTime || '',
+    likes:raw.countPraise || 0,comments:raw.countReply || 0,media:mediaFrom(raw.fileList || raw.files),
+    replies:raw.topReply || [],reactions:raw.topEmoji || []};
 }
