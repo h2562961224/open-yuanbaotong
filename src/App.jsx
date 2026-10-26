@@ -15,6 +15,7 @@ import Home from "./pages/Home.jsx";
 import Timeline, { TimelineDetail } from "./pages/Timeline.jsx";
 import Mine from "./pages/Mine.jsx";
 import Publish from "./pages/Publish.jsx";
+import BookEditor from "./pages/BookEditor.jsx";
 import { Address, AddBaby, AssociateParent } from "./pages/Forms.jsx";
 import {
   Food,
@@ -241,6 +242,9 @@ export default function App() {
         break;
       case "book":
         page = <Book {...common} id={params.id} title={params.title} />;
+        break;
+      case "book-edit":
+        page = <BookEditor {...common} id={params.id} title={params.title} />;
         break;
       case "orders":
         page = <Orders {...common} />;

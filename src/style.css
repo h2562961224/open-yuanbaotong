@@ -1651,3 +1651,289 @@ svg {
 .image-stage.zoomed .viewer-placeholder {
   display: none;
 }
+
+.book-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.book-actions button {
+  border: 1px solid var(--purple);
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--purple);
+}
+.book-actions button:first-child {
+  background: var(--purple);
+  color: white;
+}
+.archive-editor {
+  background: #f4f4f4;
+  min-height: 100dvh;
+  padding-bottom: 20px;
+}
+.archive-save {
+  color: var(--purple);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.archive-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  font-size: 14px;
+  background: white;
+}
+.archive-topline button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.archive-stage {
+  padding: 18px 14px 4px;
+}
+.archive-paper {
+  position: relative;
+  max-width: 530px;
+  margin: auto;
+  background: white;
+  box-shadow: 0 2px 10px #00000016;
+  overflow: hidden;
+}
+.archive-paper canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.archive-layer {
+  position: absolute;
+  transform-origin: center;
+  touch-action: none;
+  border: 1px solid transparent;
+  cursor: move;
+  padding: 0;
+}
+.archive-layer.selected {
+  border: 2px solid #8862d1;
+  background: #8862d10c;
+}
+.archive-layer.empty {
+  border: 1px dashed #aaa;
+}
+.archive-layer:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.archive-hint {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+  padding: 9px;
+}
+.archive-paging {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  background: white;
+  font-size: 14px;
+}
+.archive-paging span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.archive-paging button {
+  white-space: nowrap;
+  color: var(--purple);
+}
+.archive-toolbar {
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  padding: 14px 4px;
+  border-top: 1px solid #eee;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+}
+.archive-toolbar button {
+  display: grid;
+  gap: 5px;
+  justify-items: center;
+  font-size: 12px;
+  min-width: 45px;
+}
+.archive-toolbar svg {
+  width: 22px;
+  height: 22px;
+  color: #777;
+}
+.archive-toolbar button:disabled {
+  opacity: 0.3;
+}
+.archive-controls {
+  background: white;
+  padding: 14px 18px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid #eee;
+}
+.archive-controls > label:first-child {
+  width: 100%;
+}
+.archive-controls label {
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  color: #666;
+}
+.archive-controls textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 100%;
+  min-height: 85px;
+  color: #222;
+}
+.archive-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.archive-fields input[type="number"] {
+  width: 60px;
+}
+.archive-fields input,
+.archive-fields select {
+  height: 34px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  max-width: 150px;
+  padding: 4px;
+}
+.archive-controls > button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--purple);
+}
+.archive-controls .archive-delete {
+  color: #999;
+  margin-left: auto;
+}
+.archive-error {
+  padding: 12px 18px;
+  background: #fff5f5;
+  color: #a83c3c;
+  font-size: 13px;
+}
+.archive-error button {
+  margin-left: 12px;
+  text-decoration: underline;
+}
+.archive-page-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: white;
+}
+.archive-page-list button {
+  padding: 4px;
+  border: 1px solid #eee;
+  font-size: 12px;
+}
+.archive-page-list button.active {
+  border-color: var(--purple);
+  color: var(--purple);
+}
+.archive-page-list img {
+  width: 100%;
+  aspect-ratio: 750/1061;
+  object-fit: contain;
+}
+.archive-photo-picker {
+  background: white;
+  padding: 14px;
+}
+.archive-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+.archive-panel-head button {
+  color: var(--purple);
+}
+.archive-local {
+  display: block;
+  text-align: center;
+  border: 1px dashed #cfc6dd;
+  border-radius: 7px;
+  padding: 12px;
+  margin: 12px 0;
+  cursor: pointer;
+  color: var(--purple);
+  font-size: 14px;
+}
+.archive-local input {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.archive-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.archive-photo-grid img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.archive-busy {
+  position: fixed;
+  inset: 0;
+  background: #0006;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 16px;
+}
+.archive-leave {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: min(88vw, 360px);
+  padding: 24px;
+  background: white;
+  box-shadow: 0 0 0 100vmax #0005;
+  border-radius: 12px;
+  text-align: center;
+}
+.archive-leave p {
+  margin-bottom: 15px;
+}
+.archive-leave button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-top: 1px solid #eee;
+  color: var(--purple);
+  font-size: 14px;
+}

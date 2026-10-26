@@ -162,30 +162,47 @@ export function Growth({ child, onBack, navigate }) {
       <State {...state} empty={!rows.length} />
       <div className="book-list">
         {rows.map((book) => (
-          <button
-            key={book.order_book_id}
-            className="book-card"
-            onClick={() =>
-              navigate("book", {
-                id: book.order_book_id,
-                title: book.order_book_name,
-              })
-            }
-          >
+          <article key={book.order_book_id} className="book-card">
             <img src={previewUrl(book.cover_url, 500)} alt="" />
             <div>
               <h2>{book.order_book_name}</h2>
               <p>{book.semester_name}</p>
               <p>{book.class_name}</p>
-              <span>去查看 ›</span>
+              {book.lack_photo_number > 0 && (
+                <p>还有 {book.lack_photo_number} 张照片待补充</p>
+              )}
+              <div className="book-actions">
+                <button
+                  onClick={() =>
+                    navigate(book.enum_status === 200 ? "book" : "book-edit", {
+                      id: book.order_book_id,
+                      title: book.order_book_name,
+                    })
+                  }
+                >
+                  {book.enum_status === 200 ? "去查看" : "去制作"}
+                </button>
+                {book.enum_status !== 200 && (
+                  <button
+                    onClick={() =>
+                      navigate("book", {
+                        id: book.order_book_id,
+                        title: book.order_book_name,
+                      })
+                    }
+                  >
+                    预览
+                  </button>
+                )}
+              </div>
             </div>
-          </button>
+          </article>
         ))}
       </div>
     </>
   );
 }
-export function Book({ id, title, onBack, onView }) {
+export function Book({ id, title, onBack, onView, navigate }) {
   const state = useRemote(() => api.bookInfo(id), [id]);
   const pages = state.data?.pages || [];
   const media = pages.map((page) => ({
@@ -193,7 +210,25 @@ export function Book({ id, title, onBack, onView }) {
   }));
   return (
     <>
-      <Header title={title || "成长档案"} onBack={onBack} />
+      <Header
+        title={title || "成长档案"}
+        onBack={onBack}
+        action={
+          state.data &&
+          state.data.enum_status !== 200 && (
+            <button
+              onClick={() =>
+                navigate("book-edit", {
+                  id,
+                  title: title || state.data.order_book_name,
+                })
+              }
+            >
+              去制作
+            </button>
+          )
+        }
+      />
       <State {...state} empty={!pages.length} />
       <div className="book-pages">
         {pages.map((page, index) => (

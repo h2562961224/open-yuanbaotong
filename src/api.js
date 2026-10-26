@@ -84,6 +84,11 @@ export async function login(mobile, code) {
   sessionStorage.setItem(storageKey, token);
 }
 export const userInfo = () => request("account", "/api/client/user/info");
+export const bookPage = (id) =>
+  request("album", `/api/client/app/order/page/info/${encodeURIComponent(id)}`);
+export const albumFonts = () => request("album", "/api/client/app/asset/font");
+export const saveBookPages = (pages) =>
+  request("album", "/api/client/app/order/page/saveBatch", pages, true, "POST");
 export const familyBabies = () =>
   request("account", "/api/client/ram/familyBaby");
 export const menus = (child) =>

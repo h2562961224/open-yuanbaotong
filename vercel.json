@@ -47,6 +47,10 @@
     {
       "source": "/media/appbaby/:path*",
       "destination": "https://qiniu.appbaby.net/:path*"
+    },
+    {
+      "source": "/media/fonts/:path*",
+      "destination": "https://admin.appbaby.net/image/font/:path*"
     }
   ],
   "headers": [
