@@ -80,6 +80,7 @@ export default function ArchivePhotos({
             .filter(
               (p, i, all) =>
                 p.photoUrl &&
+                !/\.(mp4|mov|m4v|webm|avi|3gp)(\?|$)/i.test(p.photoUrl) &&
                 all.findIndex((x) => x.photoUrl === p.photoUrl) === i,
             )
             .map((p) => (

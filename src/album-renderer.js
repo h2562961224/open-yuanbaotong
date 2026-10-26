@@ -126,9 +126,9 @@ function paintText(ctx, layer, w) {
 export async function renderAlbumPage(canvas, page, size, fonts) {
   if (!(size?.preview_width > 0 && size?.preview_height > 0))
     throw new Error("档案页面尺寸无效");
-  const layers = [...(page.layers || [])].sort(
-    (a, b) => (a.sort || 0) - (b.sort || 0),
-  );
+  const layers = [...(page.layers || [])]
+    .filter((layer) => layer.layer_id !== "shape-qr")
+    .sort((a, b) => (a.sort || 0) - (b.sort || 0));
   await loadAlbumFonts(fonts, [page]);
   const urls = [
     page.back_preview_url,
