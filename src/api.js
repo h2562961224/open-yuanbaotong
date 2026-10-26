@@ -1,10 +1,13 @@
 const storageKey = "open-yuanbaotong.session";
-let token = sessionStorage.getItem(storageKey) || "";
+let token = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey) || "";
+if (token) localStorage.setItem(storageKey, token);
+sessionStorage.removeItem(storageKey);
 export function hasSession() {
   return !!token;
 }
 export function clearSession() {
   token = "";
+  localStorage.removeItem(storageKey);
   sessionStorage.removeItem(storageKey);
 }
 export class ApiError extends Error {
@@ -81,7 +84,7 @@ export async function login(mobile, code) {
   if (!value || typeof value !== "string")
     throw new ApiError("登录接口未返回有效登录凭据，请重试");
   token = value;
-  sessionStorage.setItem(storageKey, token);
+  localStorage.setItem(storageKey, token);
 }
 export const userInfo = () => request("account", "/api/client/user/info");
 export const bookPage = (id) =>
