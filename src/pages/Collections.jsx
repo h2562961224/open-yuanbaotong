@@ -210,7 +210,7 @@ export function Book({ id, title, onBack, onView }) {
   );
 }
 export function Orders({ child, onBack }) {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("0");
   const state = useRemote(() => api.orders(child, status), [child.id, status]);
   const rows = state.data ? pageFrom(state.data).rows : [];
   return (
@@ -220,21 +220,26 @@ export function Orders({ child, onBack }) {
         value={status}
         onChange={setStatus}
         items={[
-          ["", "全部"],
-          ["0", "待付款"],
+          ["0", "全部"],
+          ["50", "待付款"],
           ["100", "已付款"],
-          ["200", "已完成"],
         ]}
         label="订单状态"
       />
       <State {...state} empty={!rows.length} />
       {rows.map((order, index) => (
         <article className="content-paper" key={order.order_no || index}>
-          <h2>{order.order_name || order.prod_name || "成长档案"}</h2>
-          <p>{order.order_status_desc || order.status_desc}</p>
-          <p>{order.create_time}</p>
+          <h2>{order.order_title || "成长档案"}</h2>
+          <p>
+            {{ 100: "等待付款", 200: "已付款", 300: "已退款", 400: "订单取消" }[
+              order.order_status
+            ] || ""}
+          </p>
+          <p>
+            {order.page} 页 · {order.tnum} 本
+          </p>
           <p>订单号：{order.order_no}</p>
-          {order.amount != null && <p>¥ {order.amount}</p>}
+          {order.tamt != null && <p>¥ {order.tamt}</p>}
         </article>
       ))}
     </>
