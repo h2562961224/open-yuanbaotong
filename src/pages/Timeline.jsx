@@ -1,3 +1,4 @@
+import { appAsset } from "../app-assets.js";
 import { useState } from "react";
 import { ChevronDown, Search, RefreshCw } from "lucide-react";
 import * as api from "../api.js";
@@ -151,7 +152,7 @@ export default function Timeline({
         aria-label="发布动态"
         onClick={() => navigate("publish")}
       >
-        <img src="/app-assets/timeline/timeline_publish_btn.png" alt="" />
+        <img src={appAsset("timeline/timeline_publish_btn.png")} alt="" />
       </button>
     </>
   );

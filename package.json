@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "check": "node --check src/api.js && node --check src/models.js && node --check src/media.js"
+    "check": "node --check src/api.js && node --check src/models.js && node --check src/media.js",
+    "prebuild": "node scripts/restore-assets.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -20,12 +21,15 @@
     "qiniu-js": "^3.4.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.2",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "@types/lodash": "^4.17.20",
+    "qiniu": "^7.14.0"
   }
 }

@@ -3,3 +3,9 @@ dist/
 node_modules/
 .env*
 .DS_Store
+
+.sxq/
+.superun/skills/
+src/app-assets/**/*.png
+
+src/fonts/*.ttf

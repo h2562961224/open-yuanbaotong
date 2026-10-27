@@ -1,3 +1,4 @@
+import { appAsset } from "./app-assets.js";
 import {
   useCallback,
   useEffect,
@@ -379,7 +380,9 @@ export default function App() {
                     onClick={() => navigate(key)}
                   >
                     <img
-                      src={`/app-assets/tabs/tab_${key}_${name === key ? 1 : 0}.png`}
+                      src={appAsset(
+                        `tabs/tab_${key}_${name === key ? 1 : 0}.png`,
+                      )}
                       alt=""
                     />
                     {title}

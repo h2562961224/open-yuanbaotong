@@ -1,0 +1,32 @@
+{
+  "bohanti.ttf": {
+    "chunks": 6,
+    "sha256": "7c7d21480ddfe6de37a6ea78a4fc33639839676f4dc07106fbb849d67d7b2e55",
+    "bytes": 3770312
+  },
+  "heijianti.ttf": {
+    "chunks": 3,
+    "sha256": "2fdb7bc52ec128c36b1fc7a5c5938dc91a2a7240dac679ca1ff296df570a821c",
+    "bytes": 2171972
+  },
+  "heijiantizheng.ttf": {
+    "chunks": 3,
+    "sha256": "7a9941642d199f49479c3c04e547c923040571defc015355d5131b0938afa960",
+    "bytes": 2122688
+  },
+  "liuliuyuan.ttf": {
+    "chunks": 10,
+    "sha256": "60660e6f2f7959a2fb792a6c8f7f6b2320f56f29b3727ee3de86f2f1fb7af68f",
+    "bytes": 7347408
+  },
+  "loveti.ttf": {
+    "chunks": 8,
+    "sha256": "4188b5a004b52869715dec9c4fa8901bd833c84584e11abbb246110ad85fa454",
+    "bytes": 5630504
+  },
+  "xiaodouti.ttf": {
+    "chunks": 8,
+    "sha256": "28f2c60199c95781ae486e346f7380cfa4c65f1d94329f8b20c72972f1430492",
+    "bytes": 5377892
+  }
+}

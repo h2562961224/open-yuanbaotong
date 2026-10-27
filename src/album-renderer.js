@@ -1,4 +1,6 @@
-import { safeUrl } from "./media.js";
+import { albumFonts } from "./album-fonts.js";
+import { proxyUrl } from "./proxy.js";
+import { safeUrl, mediaProxyUrl } from "./media.js";
 
 const imageCache = new Map();
 const fontCache = new Map();
@@ -7,17 +9,17 @@ export function albumAsset(raw) {
   const safe = safeUrl(raw);
   if (!safe) throw new Error("页面素材地址无效");
   const url = new URL(safe);
-  const route = {
-    "qiniu-sybaby.zyosoft.cn": "qiniu",
-    "ali-sybaby.zyosoft.cn": "ali",
-    "qiniu.appbaby.net": "appbaby",
-  }[url.hostname];
   if (
     url.hostname === "admin.appbaby.net" &&
     url.pathname.startsWith("/image/font/")
   )
-    return `/media/fonts/${url.pathname.slice("/image/font/".length)}${url.search}`;
-  return route ? `/media/${route}${url.pathname}${url.search}` : safe;
+    return (
+      albumFonts[url.pathname.slice("/image/font/".length)] ||
+      proxyUrl(
+        `/media/fonts/${url.pathname.slice("/image/font/".length)}${url.search}`,
+      )
+    );
+  return safe;
 }
 export function loadAlbumImage(url) {
   if (!imageCache.has(url))
@@ -25,9 +27,21 @@ export function loadAlbumImage(url) {
       url,
       new Promise((resolve, reject) => {
         const image = new Image();
+        // Anonymous CORS is required: a display-only image would taint the
+        // canvas and break thumbnail export when saving the archive.
         image.crossOrigin = "anonymous";
+        image.referrerPolicy = "no-referrer";
+        let triedProxy = false;
         image.onload = () => resolve(image);
         image.onerror = () => {
+          if (!triedProxy) {
+            triedProxy = true;
+            const fallback = mediaProxyUrl(url);
+            if (fallback) {
+              image.src = fallback;
+              return;
+            }
+          }
           imageCache.delete(url);
           reject(new Error("页面素材加载失败，请重试"));
         };

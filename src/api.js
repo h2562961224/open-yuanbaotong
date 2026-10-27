@@ -1,5 +1,7 @@
+import { proxyUrl } from "./proxy.js";
 const storageKey = "open-yuanbaotong.session";
-let token = localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey) || "";
+let token =
+  localStorage.getItem(storageKey) || sessionStorage.getItem(storageKey) || "";
 if (token) localStorage.setItem(storageKey, token);
 sessionStorage.removeItem(storageKey);
 export function hasSession() {
@@ -23,7 +25,7 @@ export async function request(
   authenticated = true,
   method = "GET",
 ) {
-  const url = new URL(`/api/${service}${path}`, location.origin);
+  const url = new URL(proxyUrl(`/api/${service}${path}`));
   for (const [key, value] of Object.entries(params))
     if (method === "GET" && value != null)
       url.searchParams.set(key, String(value));

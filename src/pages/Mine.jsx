@@ -1,7 +1,8 @@
+import { appAsset } from "../app-assets.js";
 import * as api from "../api.js";
 import { useRemote } from "../hooks.js";
 import { Avatar, Row, State } from "../ui.jsx";
-const icon = (name) => `/app-assets/mine/${name}.png`;
+const icon = (name) => appAsset(`mine/${name}.png`);
 export default function Mine({ child, children, profile, navigate }) {
   const messages = useRemote(() => api.messages(), [child.id]);
   return (

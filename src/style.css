@@ -1029,7 +1029,7 @@ svg {
   padding: 18px;
 }
 .timeline-baby {
-  background: #faf7ff url("/app-assets/timeline/timeline_head_bg0.png")
+  background: #faf7ff url("./app-assets/timeline/timeline_head_bg0.png")
     center/cover;
 }
 .timeline-baby .album-link {
@@ -1108,7 +1108,7 @@ svg {
   padding-bottom: 15px;
 }
 .mine-top {
-  background: #f0dfff url("/app-assets/mine/mine_home_bg_2.png") center top/100%
+  background: #f0dfff url("./app-assets/mine/mine_home_bg_2.png") center top/100%
     auto no-repeat;
   padding: 25px 22px 80px;
 }

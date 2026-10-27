@@ -2,7 +2,7 @@
 
 园宝通家长端的非官方开源 Web 客户端。界面按 Android 家长 App 的布局、配色和图标还原，保留「家园」「时光轴」「我的」，不包含好学堂和印品屋。
 
-React + Vite + Tailwind CSS + shadcn/ui。构建产物为纯静态资源；Vercel 外部 rewrites 转发官方接口，无自建后端、数据库或 Serverless Function。
+React + Vite + Tailwind CSS + shadcn/ui。前端构建产物为静态资源，部署于 Superun；superun 云计算 Edge Function 以固定服务映射转发官方接口和媒体，不新增业务数据库。
 
 ## 使用
 
@@ -27,14 +27,18 @@ npm run check
 npm run build
 ```
 
-在 Vercel 导入仓库，Framework Preset 选 Vite。配置已指定构建命令 `npm run build` 和目录 `dist`。使用 Node.js 22 或更新版本。不需要设置账号、密码或 API Key 环境变量。
+使用 Node.js 22 或更新版本，构建命令 `npm run build`，输出目录 `dist`。启用 superun 云计算，由平台环境配置提供 `VITE_SUPABASE_URL`，前端通过该地址调用 `yuanbaotong-proxy` Edge Function。函数配置关闭平台 JWT 校验，实际账号权限仍由园宝通 token 校验；不需要园宝通账号密钥环境变量。
 
-本地 Vite 仅提供静态页面；官方接口需在已应用 `vercel.json` rewrite 的 Vercel 环境使用。
+通过 `sxq push` 同步代码，`sxq preview ef` 更新转发函数，`sxq preview` 构建前端预览；`sxq deploy` 打开正式发布确认页。官方 UI PNG 和六款档案字体以 Base64 文本同步，构建前恢复原字节并由 Vite 发布到 CDN，避免 CLI 跳过二进制文件。字体重建时核对 SHA-256；不再依赖字体服务器与云函数运行环境之间的 TLS 兼容性。
+
+本地开发需配置 `.env.local` 中的 `VITE_SUPABASE_URL` 为本项目云服务地址；无需保留 Vercel 转发。
 
 ## 数据与许可
 
 登录凭据保存在当前域名的 `localStorage`，关闭页面后仍保留，退出登录或凭据过期后清除；旧版当前标签页的凭据会自动迁移。验证码不持久保存。账号响应不进入源码、静态构建或服务端数据库。代码不加入第三方统计、会话回放或请求日志；上传 SDK 的统计上报已关闭。
 
-转发仅允许配置中列出的官方服务和媒体域名，无任意 URL 代理。API 响应设置 `private, no-store`。部署者的 Vercel 项目会转发请求给园宝通，因此应使用可信部署或自行部署。
+普通图片/视频预览直接访问官方 CDN。原图下载和档案画布图片先尝试匿名 CORS 直连；浏览器无法读取时才对允许的官方媒体域名回退云函数。HTTP 错误和下载超时不触发额外转发。档案图像始终使用匿名 CORS，避免污染 Canvas 导致缩略图无法导出；六款档案字体继续由本项目前端 CDN 提供。
 
-源代码采用 MIT 许可。`public/app-assets/` 的官方 UI 素材版权属于原权利人，不适用 MIT；见 `THIRD_PARTY_LICENSES.md`。仓库不包含 APK、反编译代码、登录凭据、儿童照片或个人账号数据。本项目与园宝通及其开发商无关联。
+转发仅允许配置中列出的官方服务和媒体域名，无任意 URL 代理。API 响应设置 `private, no-store`。本项目的 superun 云计算会转发请求给园宝通，因此应使用可信部署或自行部署。
+
+源代码采用 MIT 许可。`src/app-assets/` 的官方 UI 素材版权属于原权利人，不适用 MIT；见 `THIRD_PARTY_LICENSES.md`。仓库不包含 APK、反编译代码、登录凭据、儿童照片或个人账号数据。本项目与园宝通及其开发商无关联。

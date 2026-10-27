@@ -1,3 +1,4 @@
+import { appAsset } from "../app-assets.js";
 import { useState } from "react";
 import { Bell, ChevronDown } from "lucide-react";
 import * as api from "../api.js";
@@ -74,7 +75,7 @@ export default function Home({ child, children, onChild, navigate }) {
       <div className="home-cards">
         {cards.map(([key, title, image]) => (
           <button key={key} onClick={() => navigate(key)}>
-            <img src={`/app-assets/home/home_${image}.png`} alt="" />
+            <img src={appAsset(`home/home_${image}.png`)} alt="" />
             <span>
               {title}
               <b>➜</b>

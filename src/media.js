@@ -1,8 +1,16 @@
+import { proxyUrl } from "./proxy.js";
 const routes = {
   "ali-sybaby.zyosoft.cn": "ali",
   "qiniu-sybaby.zyosoft.cn": "qiniu",
   "qiniu.appbaby.net": "appbaby",
 };
+export function mediaProxyUrl(raw) {
+  const source = safeUrl(raw);
+  if (!source) return "";
+  const url = new URL(source);
+  const route = routes[url.hostname];
+  return route ? proxyUrl(`/media/${route}${url.pathname}${url.search}`) : "";
+}
 export function safeUrl(raw) {
   try {
     const url = new URL(raw);
@@ -55,15 +63,23 @@ export function previewUrl(raw, width) {
 export async function saveOriginal(raw, filename) {
   const original = originalUrl(raw);
   if (!original) throw new Error("原图地址无效");
-  const url = new URL(original);
-  const route = routes[url.hostname];
-  const endpoint = route
-    ? `/media/${route}${url.pathname}${url.search}`
-    : original;
-  const response = await fetch(endpoint, {
+  const options = {
     signal: AbortSignal.timeout(120000),
     referrerPolicy: "no-referrer",
-  });
+    mode: "cors",
+    credentials: "omit",
+  };
+  let response;
+  try {
+    response = await fetch(original, options);
+  } catch (error) {
+    // Browsers report CORS and network failures as TypeError; HTTP errors and
+    // cancellation must not trigger another download through the proxy.
+    if (!(error instanceof TypeError)) throw error;
+    const fallback = mediaProxyUrl(original);
+    if (!fallback) throw error;
+    response = await fetch(fallback, options);
+  }
   if (!response.ok) throw new Error(`原图下载失败（${response.status}）`);
   const blob = await response.blob();
   if (!blob.type.startsWith("image/"))
